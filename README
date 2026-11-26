@@ -36,7 +36,7 @@ repo bootstrapper/
 ### 1. Клонирование и зависимости
 ```powershell
 cd "D:\projects\scripts"
-git clone https://github.com/koumorikai/repo-bootstrapper.git "repo bootstrapper"
+git clone [https://github.com/koumorikai/repo-bootstrapper.git](https://github.com/koumorikai/repo-bootstrapper.git) "repo bootstrapper"
 cd "repo bootstrapper"
 pip install requests python-dotenv
 ```
