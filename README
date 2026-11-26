@@ -8,7 +8,7 @@ CLI-утилита на Python для автоматического созда�
 
 - **Строгая структура папок:** проекты автоматически распределяются по разделам (`apps`, `bots`, `scripts`, `www`, `algo`, `practice`) или создаются по явно указанному пути через `--dir`.
 - **Готовые стартовые пресеты:** генерация рабочих файлов под `python`, `bot` (aiogram), `react` (Vite), `flutter` и `cpp` (MinGW-w64) вместе с `.gitignore`, `.env.example` и структурированным `README.md`.
-- **Полный цикл Git + GitHub API:** создание репозитория (приватного по умолчанию или публичного по флагу `--public`), `git init -b main`, первый коммит и `git push -u origin main`.
+- **Полный цикл Git + GitHub API:** создание репозитория на `github.com/koumorikai` (приватного по умолчанию или публичного по флагу `--public`), `git init -b main`, первый коммит и `git push -u origin main`.
 
 ```text
 repo bootstrapper/
@@ -36,7 +36,7 @@ repo bootstrapper/
 ### 1. Клонирование и зависимости
 ```powershell
 cd "D:\projects\scripts"
-git clone https://github.com/koumorikai/repo-bootstrapper.git "repo bootstrapper"
+git clone [https://github.com/koumorikai/repo-bootstrapper.git](https://github.com/koumorikai/repo-bootstrapper.git) "repo bootstrapper"
 cd "repo bootstrapper"
 pip install requests python-dotenv
 ```
@@ -102,6 +102,6 @@ gh-init test-tool cpp --dir "D:\projects\experiments"
    - задай стартовые файлы (например, точку входа, конфиг зависимостей и специфичные правила для `.gitignore`);
    - добавь метаданные стека для автогенерации `README.md`.
 3. Проверь работу нового шаблона на тестовой папке без засорения основных каталогов:
-   ```powershell
-   gh-init template-check <new-stack> --dir "D:\projects\experiments"
-   ```
+```powershell
+gh-init template-check <new-stack> --dir "D:\projects\experiments"
+```
