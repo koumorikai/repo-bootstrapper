@@ -1,23 +1,107 @@
-cd "D:\projects\scripts\repo bootstrapper"
-
-$content = @"
 # gh-init (Repo Bootstrapper)
 
-CLI-утилита на Python для автоматического создания нового проекта в ``D:\projects``, генерации стартового каркаса файлов и документации (``README.md``, ``.gitignore``, точка входа), создания репозитория на GitHub и выполнения первого коммита и пуша одной командой.
+CLI-утилита на Python для автоматического создания нового проекта в `D:\projects`, генерации стартового каркаса файлов и документации (`README.md`, `.gitignore`, точка входа), создания репозитория на GitHub и выполнения первого коммита и пуша одной командой.
 
 ---
 
 ## Возможности и архитектура
 
-* **Строгая структура папок:** проекты автоматически распределяются по разделам (``apps``, ``bots``, ``scripts``, ``www``, ``algo``, ``practice``).
-* **Готовые стартовые пресеты:** генерация рабочих файлов под ``python``, ``bot`` (aiogram), ``react`` (Vite), ``flutter`` и ``cpp`` (MinGW-w64) вместе с ``.gitignore``, ``.env.example`` и структурированным ``README.md``.
-* **Полный цикл Git + GitHub API:** создание репозитория (приватного по умолчанию или публичного по флагу ``--public``), ``git init -b main``, первый коммит и ``git push -u origin main``.
+- **Строгая структура папок:** проекты автоматически распределяются по разделам (`apps`, `bots`, `scripts`, `www`, `algo`, `practice`) или создаются по явно указанному пути через `--dir`.
+- **Готовые стартовые пресеты:** генерация рабочих файлов под `python`, `bot` (aiogram), `react` (Vite), `flutter` и `cpp` (MinGW-w64) вместе с `.gitignore`, `.env.example` и структурированным `README.md`.
+- **Полный цикл Git + GitHub API:** создание репозитория (приватного по умолчанию или публичного по флагу `--public`), `git init -b main`, первый коммит и `git push -u origin main`.
 
-````text
+```text
 repo bootstrapper/
 ├── main.py          # Точка входа CLI, парсинг аргументов, выбор раздела и Git-пайплайн
 ├── github_api.py    # Работа с GitHub REST API (POST /user/repos)
 ├── templates.py     # Словарь разделов, метаданные стеков, генератор README и шаблоны файлов
 ├── gh-init.bat      # Обёртка для запуска утилиты из любой папки в Windows
+├── .env.example     # Шаблон переменных окружения (GITHUB_TOKEN)
 ├── .gitignore       # Исключения для Git
 └── README.md        # Полная документация
+```
+
+---
+
+## Требования
+
+- **Python** 3.10+ (рекомендуется 3.15)
+- **Git** (установленный и добавленный в `PATH`)
+- **GitHub Personal Access Token** с правами `repo`
+
+---
+
+## Установка и настройка
+
+### 1. Клонирование и зависимости
+```powershell
+cd "D:\projects\scripts"
+git clone https://github.com/koumorikai/repo-bootstrapper.git "repo bootstrapper"
+cd "repo bootstrapper"
+pip install requests python-dotenv
+```
+
+### 2. Настройка GitHub Token
+Создай файл `.env` в корне `D:\projects\scripts\repo bootstrapper` (или скопируй из `.env.example`) и укажи свой токен:
+```env
+GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+### 3. Добавление `gh-init` в системный `PATH` (Windows)
+Чтобы запускать `gh-init` из любой директории в PowerShell или CMD, добавь папку `D:\projects\scripts\repo bootstrapper` в пользовательскую переменную `Path`:
+```powershell
+$toolPath = "D:\projects\scripts\repo bootstrapper"
+$currentPath = [Environment]::GetEnvironmentVariable("Path", "User")
+if ($currentPath -notlike "*$toolPath*") {
+    [Environment]::SetEnvironmentVariable("Path", "$currentPath;$toolPath", "User")
+}
+```
+> После выполнения перезапусти терминал, чтобы изменения в `PATH` применились.
+
+---
+
+## Использование
+
+### Синтаксис
+```powershell
+gh-init <repo-name> <stack> [--public] [-d "Описание"] [--dir "Путь"]
+```
+
+### Аргументы и флаги
+| Параметр | Описание |
+| :--- | :--- |
+| `<repo-name>` | Имя локальной папки и репозитория на GitHub |
+| `<stack>` | Стек проекта: `python`, `bot`, `react`, `flutter`, `cpp` |
+| `--public` | Создать публичный репозиторий (по умолчанию — приватный) |
+| `-d`, `--description` | Описание репозитория на GitHub |
+| `--dir` | Кастомная родительская папка на ПК вместо стандартного раздела в `D:\projects` |
+
+### Примеры запуска
+Стандартный запуск (приватный репозиторий, автоматический выбор раздела в `D:\projects`):
+```powershell
+gh-init my-new-repo python
+```
+
+Публичный репозиторий с описанием:
+```powershell
+gh-init flow-widget react --public -d "Minimal dark-mode React component"
+```
+
+Создание проекта в конкретной папке на ПК:
+```powershell
+gh-init test-tool cpp --dir "D:\projects\experiments"
+```
+
+---
+
+## Как добавить новый шаблон (template)
+
+1. Открой `templates.py`.
+2. Добавь запись для нового стека в словарь пресетов/шаблонов:
+   - укажи раздел по умолчанию (`apps`, `bots`, `scripts`, `www`, `algo` или `practice`);
+   - задай стартовые файлы (например, точку входа, конфиг зависимостей и специфичные правила для `.gitignore`);
+   - добавь метаданные стека для автогенерации `README.md`.
+3. Проверь работу нового шаблона на тестовой папке без засорения основных каталогов:
+   ```powershell
+   gh-init template-check <new-stack> --dir "D:\projects\experiments"
+   ```
